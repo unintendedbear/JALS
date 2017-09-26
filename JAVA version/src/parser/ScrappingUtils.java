@@ -43,6 +43,12 @@ public class ScrappingUtils {
 	}
 
 	public Elements getProducts(Document document) {
+		Elements productList = document.select("div.product");
+		
+		return productList;
+	}
+
+	public String getProductsInJSONArray() {
 		// TODO Auto-generated method stub
 		return null;
 	}
