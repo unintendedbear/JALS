@@ -32,8 +32,11 @@ public class TestScrappingUtils {
 	@Test
 	public void testWhenConnectThenResultContainsHTMLTags() {
 		ScrappingUtils scraper = new ScrappingUtils();
-		String currentHTML = scraper.getHTMLDocument();
-		assertTrue("Should have returned an HTML document", currentHTML.matches("<html>.*</html>"));
+		String urlString = "https://www.port-monitor.com/plans-and-pricing";
+		String currentHTML = scraper.getHTMLFromURL(urlString);
+		currentHTML = currentHTML.substring(0, 30);
+		
+		assertTrue(currentHTML.matches("^<!?d?o?c?t?y?p?e?\\s?html>\n.*"));
 	}
 
 }

@@ -16,15 +16,29 @@ package parser;
  * 
  */
 
+import java.io.IOException;
+
+import org.jsoup.Jsoup;
+
 /**
  * @author Paloma de las Cuevas Delgado
  *
  */
+
+import org.jsoup.nodes.*;
+
 public class ScrappingUtils {
 
-	public String getHTMLDocument() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getHTMLFromURL(String url) {
+		Document URLDocument = null;
+		try {
+			URLDocument = Jsoup.connect(url).get();
+		} catch (IOException e) {
+			System.out.println("Failed to retrieve the webpage.");
+			e.printStackTrace();
+		}
+		
+		return URLDocument.toString();
 	}
 
 }
