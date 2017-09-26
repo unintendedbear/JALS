@@ -26,10 +26,11 @@ import org.jsoup.Jsoup;
  */
 
 import org.jsoup.nodes.*;
+import org.jsoup.select.*;
 
 public class ScrappingUtils {
 
-	public String getHTMLFromURL(String url) {
+	public Document getHTMLFromURL(String url) {
 		Document URLDocument = null;
 		try {
 			URLDocument = Jsoup.connect(url).get();
@@ -38,7 +39,12 @@ public class ScrappingUtils {
 			e.printStackTrace();
 		}
 		
-		return URLDocument.toString();
+		return URLDocument;
+	}
+
+	public Elements getProducts(Document document) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

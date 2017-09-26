@@ -21,6 +21,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
+import org.jsoup.select.*;
+
 import parser.ScrappingUtils;
 
 /**
@@ -33,10 +35,21 @@ public class TestScrappingUtils {
 	public void testWhenConnectThenResultContainsHTMLTags() {
 		ScrappingUtils scraper = new ScrappingUtils();
 		String urlString = "https://www.port-monitor.com/plans-and-pricing";
-		String currentHTML = scraper.getHTMLFromURL(urlString);
+		String currentHTML = scraper.getHTMLFromURL(urlString).toString();
 		currentHTML = currentHTML.substring(0, 30);
 		
 		assertTrue(currentHTML.matches("^<!?d?o?c?t?y?p?e?\\s?html>\n.*"));
+	}
+	
+	@Test
+	public void testWhenObtainingProductsElementsNotEmpty() {
+		ScrappingUtils scraper = new ScrappingUtils();
+		String urlString = "https://www.port-monitor.com/plans-and-pricing";
+		Document URLDocument = scraper.getHTMLFromURL(urlString);
+		Elements productList = scraper.getProducts(URLDocument);
+		
+		assertTrue(productList.size() > 0);
+		
 	}
 
 }
