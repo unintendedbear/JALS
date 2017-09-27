@@ -27,6 +27,10 @@ import org.jsoup.Jsoup;
 
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ScrappingUtils {
 
@@ -48,9 +52,69 @@ public class ScrappingUtils {
 		return productList;
 	}
 
-	public String getProductsInJSONArray() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getProductsInJSONArray(Elements productElements) {
+		JSONObject productJSON = new JSONObject();
+		JSONArray productListJSON = new JSONArray();
+		String numberInTextRegExp = "\\w*\\s?(\\d{2})\\s\\w+";
+		String yesOrNoRegExp = "(Yes|No)";
+		String priceRegExp = "\\$([\\d\\.]+)[\\s/\\w]+";
+		Pattern numberInTextPattern = Pattern.compile(numberInTextRegExp);
+		Pattern yesOrNoPattern = Pattern.compile(yesOrNoRegExp);
+		Pattern pricePattern = Pattern.compile(priceRegExp);
+		
+		for (Element product: productElements) {
+			/* monitor: */
+			productJSON.put("monitors", product.select("h2").text());
+
+			/* check_rate: */			
+			Elements ddElements = product.getElementsByTag("dd");
+			Element ddCurrent = ddElements.first();
+			Matcher numberInTextMatcher = numberInTextPattern.matcher(ddCurrent.text());
+			if (numberInTextMatcher.find()) {
+				productJSON.put("check_rate", Integer.parseInt(numberInTextMatcher.group(1)));
+			} else {
+				productJSON.put("check_rate", "-");
+			}
+			
+			/* history: */
+			ddCurrent = ddCurrent.nextElementSibling().nextElementSibling();
+			numberInTextMatcher = numberInTextPattern.matcher(ddCurrent.text());
+			if (numberInTextMatcher.find()) {
+				productJSON.put("history", Integer.parseInt(numberInTextMatcher.group(1)));
+			} else {
+				productJSON.put("history", "-");
+			}
+			
+			/* multiple_notifications: */
+			ddCurrent = ddCurrent.nextElementSibling().nextElementSibling();
+			Matcher yesOrNoMatcher = yesOrNoPattern.matcher(ddCurrent.text());
+			if (yesOrNoMatcher.find()) {
+				productJSON.put("multiple_notifications", yesOrNoMatcher.group(1));
+			} else {
+				productJSON.put("multiple_notifications", "-");
+			}
+			
+			/* push_notifications: */
+			ddCurrent = ddCurrent.nextElementSibling().nextElementSibling();
+			yesOrNoMatcher = yesOrNoPattern.matcher(ddCurrent.text());
+			if (yesOrNoMatcher.find()) {
+				productJSON.put("push_notifications", yesOrNoMatcher.group(1));
+			} else {
+				productJSON.put("push_notifications", "-");
+			}
+			
+			/* price: */
+			Matcher priceMatcher = pricePattern.matcher(product.getElementsByAttributeValueContaining("class", "btn").text());
+			if (priceMatcher.find()) {
+				productJSON.put("price", Float.parseFloat(priceMatcher.group(1)));
+			} else {
+				productJSON.put("price", "-");
+			}
+			
+			productListJSON.add(productJSON);
+		}
+		
+		return productListJSON.toJSONString();
 	}
 
 }

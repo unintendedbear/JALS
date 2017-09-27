@@ -21,9 +21,11 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import java.util.Iterator;
 
 import parser.ScrappingUtils;
 
@@ -55,24 +57,29 @@ public class TestScrappingUtils {
 	
 	@Test
 	public void testWhenParsingProductThenGetExpectedJSON() {
-		String product = scraper.getProductsInJSONArray();
+		Document URLDocument = scraper.getHTMLFromURL(urlString);
+		Elements productList = scraper.getProducts(URLDocument);
+		String product = scraper.getProductsInJSONArray(productList);
 		//String expectedProductJSON = "{monitors: 10, check_rate: 60, history: 12, multiple_notifications: true, push_notifications: true, price: 4.54}";
 		
 		JSONParser parser = new JSONParser();
-		Object obj = null;
 		try {
-			obj = parser.parse(product);
+			Object tempProductList = parser.parse(product);
+			JSONArray currentProductListJSON = (JSONArray) tempProductList;
+			Iterator<JSONObject> JSONIterator = currentProductListJSON.iterator();
+			while (JSONIterator.hasNext()) {
+				JSONObject currentProduct = JSONIterator.next();
+				assertTrue(currentProduct.containsKey("monitors"));
+				assertTrue(currentProduct.containsKey("check_rate"));
+				assertTrue(currentProduct.containsKey("history"));
+				assertTrue(currentProduct.containsKey("multiple_notifications"));
+				assertTrue(currentProduct.containsKey("push_notifications"));
+				assertTrue(currentProduct.containsKey("price"));
+			}
 		} catch (ParseException e) {
-			System.out.println("Failed to parse JSON.");
+			fail("Failed to parse JSON.");
 			e.printStackTrace();
 		}
-		JSONObject currentProductJSON = (JSONObject) obj;
-		assertTrue(currentProductJSON.containsKey(("monitors")));
-		assertTrue(currentProductJSON.containsKey(("check_rate")));
-		assertTrue(currentProductJSON.containsKey(("history")));
-		assertTrue(currentProductJSON.containsKey(("multiple_notifications")));
-		assertTrue(currentProductJSON.containsKey(("push_notifications")));
-		assertTrue(currentProductJSON.containsKey(("price")));
 	}
 
 }
