@@ -22,16 +22,49 @@
 
 package parser;
 
-import org.jsoup.*;
+import java.util.Iterator;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import parser.ScrappingUtils;
 
 public class Main {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
+		String urlString = "https://www.port-monitor.com/plans-and-pricing";
+		ScrappingUtils scraper = new ScrappingUtils();
 		
+		System.out.println("JALS is now parsing https://www.port-monitor.com/plans-and-pricing");
+		Document URLDoc = scraper.getHTMLFromURL(urlString);
+		Elements URLElements = scraper.getProducts(URLDoc);
+		System.out.println("Your results:");
+		printJSONArray(scraper.getProductsInJSONArray(URLElements));
+		System.out.println("Thanks for using JALS!");
+		
+	}
+	
+	public static void printJSONArray (String JSONArray) {
+		JSONParser parser = new JSONParser();
+		try {
+			Object obj = parser.parse(JSONArray);
+			JSONArray products = (JSONArray) obj;
+			@SuppressWarnings("unchecked")
+			Iterator<JSONObject> JSONIterator = products.iterator();
+			System.out.println("[");
+			while (JSONIterator.hasNext()) {
+				JSONObject currentObject = JSONIterator.next();
+				System.out.println(currentObject.toString());
+			}
+			System.out.println("]");
+		} catch (ParseException e) {
+			System.out.println("Failed to parse JSON.");
+			e.printStackTrace();
+		}
 	}
 
 }

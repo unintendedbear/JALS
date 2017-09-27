@@ -52,6 +52,7 @@ public class ScrappingUtils {
 		return productList;
 	}
 
+	@SuppressWarnings("unchecked")
 	public String getProductsInJSONArray(Elements productElements) {
 		JSONObject productJSON = new JSONObject();
 		JSONArray productListJSON = new JSONArray();

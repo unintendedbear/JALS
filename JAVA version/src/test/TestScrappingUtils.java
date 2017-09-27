@@ -66,6 +66,7 @@ public class TestScrappingUtils {
 		try {
 			Object tempProductList = parser.parse(product);
 			JSONArray currentProductListJSON = (JSONArray) tempProductList;
+			@SuppressWarnings("unchecked")
 			Iterator<JSONObject> JSONIterator = currentProductListJSON.iterator();
 			while (JSONIterator.hasNext()) {
 				JSONObject currentProduct = JSONIterator.next();
