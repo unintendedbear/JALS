@@ -97,58 +97,90 @@ public class ScrappingUtils {
 		Pattern pricePattern = Pattern.compile(priceRegExp);
 		
 		for (Element product: productElements) {
-			/* monitor: */
+			
 			productJSON.put("monitors", product.select("h2").text());
 
-			/* check_rate: */			
 			Elements ddElements = product.getElementsByTag("dd");
 			Element ddCurrent = ddElements.first();
-			Matcher numberInTextMatcher = numberInTextPattern.matcher(ddCurrent.text());
-			if (numberInTextMatcher.find()) {
-				productJSON.put("check_rate", Integer.parseInt(numberInTextMatcher.group(1)));
-			} else {
-				productJSON.put("check_rate", "-");
-			}
 			
-			/* history: */
+			getCheckRate(productJSON, numberInTextPattern, ddCurrent);
+			
 			ddCurrent = ddCurrent.nextElementSibling().nextElementSibling();
-			numberInTextMatcher = numberInTextPattern.matcher(ddCurrent.text());
-			if (numberInTextMatcher.find()) {
-				productJSON.put("history", Integer.parseInt(numberInTextMatcher.group(1)));
-			} else {
-				productJSON.put("history", "-");
-			}
+			getHistory(productJSON, numberInTextPattern, ddCurrent);
 			
-			/* multiple_notifications: */
 			ddCurrent = ddCurrent.nextElementSibling().nextElementSibling();
-			Matcher yesOrNoMatcher = yesOrNoPattern.matcher(ddCurrent.text());
-			if (yesOrNoMatcher.find()) {
-				productJSON.put("multiple_notifications", yesOrNoMatcher.group(1));
-			} else {
-				productJSON.put("multiple_notifications", "-");
-			}
+			getMultipleNotifications(productJSON, yesOrNoPattern, ddCurrent);
 			
-			/* push_notifications: */
 			ddCurrent = ddCurrent.nextElementSibling().nextElementSibling();
-			yesOrNoMatcher = yesOrNoPattern.matcher(ddCurrent.text());
-			if (yesOrNoMatcher.find()) {
-				productJSON.put("push_notifications", yesOrNoMatcher.group(1));
-			} else {
-				productJSON.put("push_notifications", "-");
-			}
+			getPushNotifications(productJSON, yesOrNoPattern, ddCurrent);
 			
-			/* price: */
-			Matcher priceMatcher = pricePattern.matcher(product.getElementsByAttributeValueContaining("class", "btn").text());
-			if (priceMatcher.find()) {
-				productJSON.put("price", Float.parseFloat(priceMatcher.group(1)));
-			} else {
-				productJSON.put("price", "-");
-			}
+			getPrice(productJSON, pricePattern, product);
 			
 			productListJSON.add(productJSON);
 		}
 		
 		return productListJSON.toJSONString();
+	}
+
+	@SuppressWarnings("unchecked")
+	private JSONObject getPrice(JSONObject productJSON, Pattern pricePattern, Element product) {
+		Matcher priceMatcher = pricePattern.matcher(product.getElementsByAttributeValueContaining("class", "btn").text());
+		if (priceMatcher.find()) {
+			productJSON.put("price", Float.parseFloat(priceMatcher.group(1)));
+		} else {
+			productJSON.put("price", "-");
+		}
+		
+		return productJSON;
+	}
+
+	@SuppressWarnings("unchecked")
+	private JSONObject getPushNotifications(JSONObject productJSON, Pattern yesOrNoPattern, Element ddCurrent) {
+		Matcher yesOrNoMatcher = yesOrNoPattern.matcher(ddCurrent.text());
+		if (yesOrNoMatcher.find()) {
+			productJSON.put("push_notifications", yesOrNoMatcher.group(1));
+		} else {
+			productJSON.put("push_notifications", "-");
+		}
+		
+		return productJSON;
+	}
+
+	@SuppressWarnings("unchecked")
+	private JSONObject getMultipleNotifications(JSONObject productJSON, Pattern yesOrNoPattern, Element ddCurrent) {
+		Matcher yesOrNoMatcher = yesOrNoPattern.matcher(ddCurrent.text());
+		if (yesOrNoMatcher.find()) {
+			productJSON.put("multiple_notifications", yesOrNoMatcher.group(1));
+		} else {
+			productJSON.put("multiple_notifications", "-");
+		}
+		
+		return productJSON;
+	}
+
+	@SuppressWarnings("unchecked")
+	private JSONObject getHistory(JSONObject productJSON, Pattern numberInTextPattern, Element ddCurrent) {
+		Matcher numberInTextMatcher;
+		numberInTextMatcher = numberInTextPattern.matcher(ddCurrent.text());
+		if (numberInTextMatcher.find()) {
+			productJSON.put("history", Integer.parseInt(numberInTextMatcher.group(1)));
+		} else {
+			productJSON.put("history", "-");
+		}
+		
+		return productJSON;
+	}
+
+	@SuppressWarnings("unchecked")
+	private JSONObject getCheckRate(JSONObject productJSON, Pattern numberInTextPattern, Element ddCurrent) {
+		Matcher numberInTextMatcher = numberInTextPattern.matcher(ddCurrent.text());
+		if (numberInTextMatcher.find()) {
+			productJSON.put("check_rate", Integer.parseInt(numberInTextMatcher.group(1)));
+		} else {
+			productJSON.put("check_rate", "-");
+		}
+		
+		return productJSON;
 	}
 
 }
