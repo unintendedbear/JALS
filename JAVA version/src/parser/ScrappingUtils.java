@@ -33,27 +33,60 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ScrappingUtils {
+	
+	String url;
+	Document document;
+	Elements list;
+	
+	public ScrappingUtils(String url) {
+		this.url = url;
+	}
 
-	public Document getHTMLFromURL(String url) {
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public Document getDocument() {
+		return document;
+	}
+
+	public void setDocument(Document document) {
+		this.document = document;
+	}
+
+	public Elements getList() {
+		return list;
+	}
+
+	public void setList(Elements list) {
+		this.list = list;
+	}
+	
+	public void getHTMLFromURL() {
 		Document URLDocument = null;
 		try {
-			URLDocument = Jsoup.connect(url).get();
+			URLDocument = Jsoup.connect(this.url).get();
 		} catch (IOException e) {
 			System.out.println("Failed to retrieve the webpage.");
 			e.printStackTrace();
 		}
 		
-		return URLDocument;
+		this.document = URLDocument;
 	}
 
-	public Elements getProducts(Document document) {
-		Elements productList = document.select("div.product");
+	public void getProducts() {
+		Elements productList = this.document.select("div.product");
 		
-		return productList;
+		this.list = productList;
 	}
 
 	@SuppressWarnings("unchecked")
-	public String getProductsInJSONArray(Elements productElements) {
+	public String getProductsInJSONArray() {
+		Elements productElements = this.list;
 		JSONObject productJSON = new JSONObject();
 		JSONArray productListJSON = new JSONArray();
 		String numberInTextRegExp = "\\w*\\s?(\\d{2})\\s\\w+";

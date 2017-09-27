@@ -28,8 +28,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import parser.ScrappingUtils;
 
@@ -37,13 +35,13 @@ public class Main {
 
 	public static void main(String[] args) {
 		String urlString = "https://www.port-monitor.com/plans-and-pricing";
-		ScrappingUtils scraper = new ScrappingUtils();
+		ScrappingUtils scraper = new ScrappingUtils(urlString);
 		
 		System.out.println("JALS is now parsing https://www.port-monitor.com/plans-and-pricing");
-		Document URLDoc = scraper.getHTMLFromURL(urlString);
-		Elements URLElements = scraper.getProducts(URLDoc);
+		scraper.getHTMLFromURL();
+		scraper.getProducts();
 		System.out.println("Your results:");
-		printJSONArray(scraper.getProductsInJSONArray(URLElements));
+		printJSONArray(scraper.getProductsInJSONArray());
 		System.out.println("Thanks for using JALS!");
 		
 	}

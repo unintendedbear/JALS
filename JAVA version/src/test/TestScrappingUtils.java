@@ -19,7 +19,6 @@ package test;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -35,12 +34,13 @@ import parser.ScrappingUtils;
  */
 public class TestScrappingUtils {
 
-	static ScrappingUtils scraper = new ScrappingUtils();
 	private static String urlString = "https://www.port-monitor.com/plans-and-pricing";
+	static ScrappingUtils scraper = new ScrappingUtils(urlString);
 
 	@Test
 	public void testWhenConnectThenResultContainsHTMLTags() {		
-		String currentHTML = scraper.getHTMLFromURL(urlString).toString();
+		scraper.getHTMLFromURL();
+		String currentHTML = scraper.getDocument().toString();
 		currentHTML = currentHTML.substring(0, 30);
 		
 		assertTrue(currentHTML.matches("^<!?d?o?c?t?y?p?e?\\s?html>\n.*"));
@@ -48,8 +48,9 @@ public class TestScrappingUtils {
 	
 	@Test
 	public void testWhenObtainingProductsElementsNotEmpty() {		
-		Document URLDocument = scraper.getHTMLFromURL(urlString);
-		Elements productList = scraper.getProducts(URLDocument);
+		scraper.getHTMLFromURL();
+		scraper.getProducts();
+		Elements productList = scraper.getList();
 		
 		assertTrue(productList.size() > 0);
 		
@@ -57,9 +58,9 @@ public class TestScrappingUtils {
 	
 	@Test
 	public void testWhenParsingProductThenGetExpectedJSON() {
-		Document URLDocument = scraper.getHTMLFromURL(urlString);
-		Elements productList = scraper.getProducts(URLDocument);
-		String product = scraper.getProductsInJSONArray(productList);
+		scraper.getHTMLFromURL();
+		scraper.getProducts();
+		String product = scraper.getProductsInJSONArray();
 		//String expectedProductJSON = "{monitors: 10, check_rate: 60, history: 12, multiple_notifications: true, push_notifications: true, price: 4.54}";
 		
 		JSONParser parser = new JSONParser();
