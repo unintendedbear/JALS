@@ -1,21 +1,40 @@
 #!/usr/bin/ruby
 
+=begin
+    JALS is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    JALS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with JALS. If not, see <http://www.gnu.org/licenses/>.
+=end
+
 require 'open-uri'
-require 'rexml/document'
-include REXML
+require 'rubygems'
+require 'nokogiri'
 
 URL_STRING = "https://www.port-monitor.com/plans-and-pricing"
 
 class Scraper
-  attr_accessor :url
+  attr_accessor :url, :document, :elements
 
   def get_HTML_from_URL
-    url_document = open(url).read
-    return url_document
+    return Nokogiri::HTML(open(url))
+  end
+
+  def get_products()
+    return document.css("div[class='product']")
   end
 end
 
 jals = Scraper.new
 jals.url = URL_STRING
-document = jals.get_HTML_from_URL()
-puts document
+jals.document = jals.get_HTML_from_URL()
+jals.elements = jals.get_products()
+puts jals.elements.length
