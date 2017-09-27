@@ -28,8 +28,19 @@ class Scraper
     return Nokogiri::HTML(open(url))
   end
 
-  def get_products()
+  def get_products
     return document.css("div[class='product']")
+  end
+
+  def get_products_in_hash
+    elements.each do |product|
+      puts product.css("h2").text
+      puts product.css("dd")[0].text
+      puts product.css("dd")[1].text
+      puts product.css("dd")[2].text
+      puts product.css("dd")[3].text
+      puts product.css("a[class='btn btn-large btn-success']").text
+    end
   end
 end
 
@@ -37,4 +48,5 @@ jals = Scraper.new
 jals.url = URL_STRING
 jals.document = jals.get_HTML_from_URL()
 jals.elements = jals.get_products()
-puts jals.elements.length
+
+jals.get_products_in_hash()
