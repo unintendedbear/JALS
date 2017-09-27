@@ -23,6 +23,7 @@
 package parser;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -55,8 +56,15 @@ public class Main {
 			Iterator<JSONObject> JSONIterator = products.iterator();
 			System.out.println("[");
 			while (JSONIterator.hasNext()) {
+				System.out.println("\t{");
 				JSONObject currentObject = JSONIterator.next();
-				System.out.println(currentObject.toString());
+				Set<String> keyList = currentObject.keySet();
+				Iterator<String> keys = keyList.iterator();
+				while (keys.hasNext()) {
+					String key = keys.next();
+					System.out.println("\t\t"+key+": "+currentObject.get(key));
+				}
+				System.out.println("\t}");
 			}
 			System.out.println("]");
 		} catch (ParseException e) {
